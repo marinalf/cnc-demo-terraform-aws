@@ -1,3 +1,4 @@
+#Define the files to ignore
 .terraform
 variable.tf
 terraform.tfstate
