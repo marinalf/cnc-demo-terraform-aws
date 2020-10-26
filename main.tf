@@ -36,20 +36,50 @@ resource "aci_cloud_context_profile" "ctx-vrf1-useast1" {
   region                   = "us-east-1"
   cloud_vendor             = "aws"
   relation_cloud_rs_to_ctx = aci_vrf.vrf1.id
+
+/*
+  hub_network              = "uni/tn-infra/gwrouterp-default"
+
+*/
+
 }
 
-resource "aci_cloud_cidr_pool" "cloud_cidr_pool" {
+data "aci_cloud_cidr_pool" "cloud_cidr_pool" {
     cloud_context_profile_dn = aci_cloud_context_profile.ctx-vrf1-useast1.id
     addr                     = "172.11.0.0/16"
 
 }
 
-resource "aci_cloud_subnet" "cloud_subnet" {
-  cloud_cidr_pool_dn            = aci_cloud_cidr_pool.cloud_cidr_pool.id
-  ip                            = "172.11.1.0/24"
-  zone                          = "us-east-1a"
+#Pending name association for subnets
 
+resource "aci_cloud_subnet" "cloud_subnet1" {
+  cloud_cidr_pool_dn            = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  ip                            = "172.11.1.0/24"
+  usage                         = "gateway"
+  zone                          = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
 }
+
+resource "aci_cloud_subnet" "cloud_subnet2" {
+  cloud_cidr_pool_dn            = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  ip                            = "172.11.2.0/24"
+  usage                         = "gateway"
+  zone                          = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
+}
+
+resource "aci_cloud_subnet" "cloud_subnet3" {
+  cloud_cidr_pool_dn            = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  ip                            = "172.11.3.0/24"
+  usage                         = "user"
+  zone                          = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
+}
+
+resource "aci_cloud_subnet" "cloud_subnet4" {
+  cloud_cidr_pool_dn            = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  ip                            = "172.11.4.0/24"
+  usage                         = "user"
+  zone                          = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
+}
+
 #Define Application Profile
 
 resource "aci_cloud_applicationcontainer" "myapp" {
@@ -118,8 +148,24 @@ resource "aci_filter_entry" "icmp" {
 
 resource "aci_contract_subject" "web-to-db" {
   contract_dn                  = aci_contract.contract_epg1_epg2.id
-  name                         = "Subject"
+  name                         = "Subject1"
   relation_vz_rs_subj_filt_att = [aci_filter.web-to-db.id]
+}
+
+#Define Cloud External EPG for Internet Access (L3Out)
+
+resource "aci_cloud_external_epg" "cloud_apic_ext_epg" {
+  name                             = "Internet"
+  cloud_applicationcontainer_dn    = aci_cloud_applicationcontainer.myapp.id
+  relation_fv_rs_cons              = [aci_contract.contract_web_internet.id]
+  relation_cloud_rs_cloud_epg_ctx  = aci_vrf.vrf1.id
+  route_reachability               = "internet"
+}
+
+resource "aci_cloud_endpoint_selectorfor_external_epgs" "ext_ep_selector" {
+  cloud_external_epg_dn  = aci_cloud_external_epg.cloud_apic_ext_epg.id
+  name                   = "Internet"
+  subnet                 = "0.0.0.0/0"
 }
 
 #Define Web to Internet Contract + Filter + Subject
@@ -131,7 +177,7 @@ resource "aci_contract" "contract_web_internet" {
 
 resource "aci_filter" "internet" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "internet"
+  name      = "Internet"
 }
 
 resource "aci_filter_entry" "all" {
@@ -142,21 +188,6 @@ resource "aci_filter_entry" "all" {
 
 resource "aci_contract_subject" "web-internet" {
   contract_dn                  = aci_contract.contract_web_internet.id
-  name                         = "Subject"
+  name                         = "Subject2"
   relation_vz_rs_subj_filt_att = [aci_filter.internet.id]
-}
-
-#Define Cloud External EPG for Internet Access (L3Out)
-
-resource "aci_cloud_external_epg" "cloud_apic_ext_epg" {
-  name                             = "Internet"
-  cloud_applicationcontainer_dn    = aci_cloud_applicationcontainer.myapp.id
-  relation_fv_rs_cons              = [aci_contract.contract_web_internet.id]
-  relation_cloud_rs_cloud_epg_ctx  = aci_vrf.vrf1.id
-}
-
-resource "aci_cloud_endpoint_selectorfor_external_epgs" "ext_ep_selector" {
-  cloud_external_epg_dn  = aci_cloud_external_epg.cloud_apic_ext_epg.id
-  name                   = "Internet"
-  subnet                 = "0.0.0.0/0"
 }
