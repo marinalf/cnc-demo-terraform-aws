@@ -10,8 +10,8 @@ High Level AWS setup
 
 Web to DB communication
 
-<img width="1018" alt="web-to-db" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/images/web-to-db.png">
+<img width="1018" alt="web-to-db" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/web-to-db.png">
 
 Web to Internet communication
 
-<img width="1008" alt="web-to-internet" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/images/web-to-internet.png">
+<img width="1008" alt="web-to-internet" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/web-to-internet.png">
