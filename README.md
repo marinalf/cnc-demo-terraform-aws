@@ -6,12 +6,12 @@ This script builds an user VPC on a single region (same region as the infra VPC 
 
 High Level AWS setup
 
-<img width="950" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/aws.png">
+<img width="950" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/aws.png">
 
 Web to DB communication
 
-<img width="1018" alt="web-to-db" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/web-to-db.png">
+<img width="1018" alt="web-to-db" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/images/web-to-db.png">
 
 Web to Internet communication
 
-<img width="1008" alt="web-to-internet" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/web-to-internet.png">
+<img width="1008" alt="web-to-internet" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/images/blob/main/images/web-to-internet.png">
