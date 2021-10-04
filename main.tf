@@ -1,5 +1,3 @@
-
-
 # Provider Config
 
 provider "aci" {
@@ -99,7 +97,7 @@ resource "aci_cloud_epg" "cloud_apic_web" {
 resource "aci_cloud_endpoint_selector" "cloud_ep_selector1" {
   cloud_epg_dn     = aci_cloud_epg.cloud_apic_web.id
   name             = "ep1-select"
-  match_expression = "custom:epg=='web'"
+  match_expression = "IP=='172.11.3.0/24'"
 }
 
 #Define DB EPG
