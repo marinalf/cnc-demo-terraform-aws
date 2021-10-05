@@ -34,7 +34,6 @@ Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC creden
 terraform init
 terraform plan
 terraform apply
-
 ```
 
 **End State on Cloud ACI**
