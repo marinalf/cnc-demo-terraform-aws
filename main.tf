@@ -26,6 +26,7 @@ resource "aci_vrf" "vrf1" {
 }
 
 #Cloud Context Profile + Subnets
+#replace "hub1" to match the name of the hub network, if different. 
 
 resource "aci_cloud_context_profile" "ctx-vrf1-useast1" {
   tenant_dn                = aci_tenant.terraform_ten.id
