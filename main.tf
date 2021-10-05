@@ -94,7 +94,7 @@ resource "aci_cloud_applicationcontainer" "myapp" {
 resource "aci_cloud_epg" "cloud_apic_web" {
   name                            = "Web"
   cloud_applicationcontainer_dn   = aci_cloud_applicationcontainer.myapp.id
-  relation_fv_rs_cons             = [aci_contract.contract_epg1_epg2.id, aci_contract.contract_web_internet.id]
+  relation_fv_rs_cons             = [aci_contract.contract_epg1_epg2.id]
   relation_fv_rs_prov             = [aci_contract.contract_web_internet.id]
   relation_cloud_rs_cloud_epg_ctx = aci_vrf.vrf1.id
 }
@@ -160,7 +160,6 @@ resource "aci_cloud_external_epg" "cloud_apic_ext_epg" {
   name                            = "Internet"
   cloud_applicationcontainer_dn   = aci_cloud_applicationcontainer.myapp.id
   relation_fv_rs_cons             = [aci_contract.contract_web_internet.id]
-  relation_fv_rs_prov             = [aci_contract.contract_web_internet.id]
   relation_cloud_rs_cloud_epg_ctx = aci_vrf.vrf1.id
   route_reachability              = "internet"
 }
