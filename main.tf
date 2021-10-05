@@ -26,7 +26,7 @@ resource "aci_vrf" "vrf1" {
 }
 
 #Cloud Context Profile + Subnets
-#replace "hub1" to match the name of the hub network, if different. 
+#replace "hub1" to match the name of the hub network, if different.
 
 resource "aci_cloud_context_profile" "ctx-vrf1-useast1" {
   tenant_dn                = aci_tenant.terraform_ten.id
@@ -45,10 +45,11 @@ data "aci_cloud_cidr_pool" "cloud_cidr_pool" {
 
 }
 
-#Pending name association for subnets
+#User & TGW Subnets
 
 resource "aci_cloud_subnet" "cloud_subnet1" {
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  name               = "tgw-a-subnet"
   ip                 = "172.11.1.0/24"
   usage              = "gateway"
   zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
@@ -56,6 +57,7 @@ resource "aci_cloud_subnet" "cloud_subnet1" {
 
 resource "aci_cloud_subnet" "cloud_subnet2" {
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  name               = "tgw-b-subnet"
   ip                 = "172.11.2.0/24"
   usage              = "gateway"
   zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
@@ -63,6 +65,7 @@ resource "aci_cloud_subnet" "cloud_subnet2" {
 
 resource "aci_cloud_subnet" "cloud_subnet3" {
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  name               = "web-subnet"
   ip                 = "172.11.3.0/24"
   usage              = "user"
   zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
@@ -71,6 +74,7 @@ resource "aci_cloud_subnet" "cloud_subnet3" {
 
 resource "aci_cloud_subnet" "cloud_subnet4" {
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
+  name               = "db-subnet"
   ip                 = "172.11.4.0/24"
   usage              = "user"
   zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
