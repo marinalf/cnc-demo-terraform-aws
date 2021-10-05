@@ -15,6 +15,7 @@ The code builds a VPC on us-east-1 region (same region as the infra VPC where cA
 **End State on Cloud ACI**
 
 <img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/myapp.png">
+
 **Pre-requisites**
 
 Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC credentials and AWS account to be used for the user Tenant/VPC are defined in a variable file.
