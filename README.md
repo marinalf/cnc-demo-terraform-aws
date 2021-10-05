@@ -4,11 +4,11 @@
 
 This project shows how Cloud ACI works on public clouds such as AWS, how it normalizes and translates the ACI policy model into public cloud native constructs, and how Terraform can be leveraged to automate Cloud ACI operations.
 
-The code builds a VPC on a single region (same region as the infra VPC where cAPIC is deployed) with TGWs, creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
-
 **High Level Diagram**
 
 <img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/hld.png">
+
+The code builds a VPC on a single region (same region as the infra VPC where cAPIC is deployed) with TGWs, creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
 
 **End State on Cloud ACI**
 
