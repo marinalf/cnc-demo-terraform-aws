@@ -10,7 +10,7 @@ This project shows how Cloud ACI works on public clouds such as AWS, how it norm
 
 ## Use Case: Single Region/Tenant/VRF
 
-The code builds a VPC on usc-east-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
+The code builds a VPC on us-east-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
 
 **End State on Cloud ACI**
 
