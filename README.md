@@ -8,7 +8,7 @@ The code builds a VPC on a single region (same region as the infra VPC where cAP
 
 **High Level Diagram**
 
-<img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/aws.png">
+<img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/hld.png">
 
 **End State on Cloud ACI**
 
