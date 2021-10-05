@@ -10,12 +10,11 @@ This project shows how Cloud ACI works on public clouds such as AWS, how it norm
 
 ## Use Case: Single Region/Tenant/VRF
 
-The code builds a VPC on east-us-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
+The code builds a VPC on usc-east-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access to/from Internet using contracts.
 
 **End State on Cloud ACI**
 
 <img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/myapp.png">
-
 **Pre-requisites**
 
 Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC credentials and AWS account to be used for the user Tenant/VPC are defined in a variable file.
