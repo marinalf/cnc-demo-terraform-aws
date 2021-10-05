@@ -1,4 +1,3 @@
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/marinalf/cloudaci-demo-terraform-aws)
 
 ## Use Case: Single Region/Tenant/VRF
 
@@ -26,14 +25,18 @@ Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC creden
 
 **Installation**
 
-1. Install and setup your [terraform] (https://www.terraform.io/downloads.html) environment
-2. Simply copy the 2 files (main.tf and versions.tf) onto your Terraform runtime environment
-3. Create your variable.tf file with your Cloud ACI credentials and AWS account
+1. Install and setup your [terraform](https://www.terraform.io/downloads.html) environment
+2. Simply copy the 2 files (main.tf and versions.tf) onto your terraform runtime environment
+3. Create a variable.tf file with your Cloud APIC credentials and AWS account used for the user tenant/VPC
 
 **Usage**
 
-Execute with usual terraform init, terraform plan and terraform apply
+```
+terraform init
+terraform plan
+terraform apply
 
+```
 **Web to DB communication**
 
 <img width="600" alt="web-to-db" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/web-to-db.png">
