@@ -1,4 +1,4 @@
-
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/marinalf/cloudaci-demo-terraform-aws)
 
 # Sample [terraform](https://www.terraform.io) integration with [Cisco Cloud ACI](https://www.cisco.com/c/en/us/solutions/data-center-virtualization/application-centric-infrastructure/cloud-aci.html)
 
