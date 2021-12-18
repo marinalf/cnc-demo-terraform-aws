@@ -22,114 +22,95 @@ resource "aci_cloud_aws_provider" "cloud_apic_provider" {
 
 resource "aci_vrf" "vrf1" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "vrf-1"
+  name      = var.vrf_name
 }
 
-#Cloud Context Profile + Subnets
-#replace "hub1" to match the name of the hub network, if different.
+#Cloud Context Profile (VPC) + Subnets
 
-resource "aci_cloud_context_profile" "ctx-vrf1-useast1" {
+resource "aci_cloud_context_profile" "ctx-vrf1" {
   tenant_dn                = aci_tenant.terraform_ten.id
-  name                     = "ctx-vrf1-useast1"
-  primary_cidr             = "172.11.0.0/16"
-  region                   = "us-east-1"
-  cloud_vendor             = "aws"
+  name                     = var.cxt_name
+  primary_cidr             = var.cxt_cidr
+  region                   = var.cxt_region
+  cloud_vendor             = var.cloud_vendor
   relation_cloud_rs_to_ctx = aci_vrf.vrf1.id
-  hub_network              = "uni/tn-infra/gwrouterp-hub1"
-
+  hub_network              = "uni/tn-infra/gwrouterp-${var.hub_name}"
 }
 
 data "aci_cloud_cidr_pool" "cloud_cidr_pool" {
-  cloud_context_profile_dn = aci_cloud_context_profile.ctx-vrf1-useast1.id
-  addr                     = "172.11.0.0/16"
-
+  cloud_context_profile_dn = aci_cloud_context_profile.ctx-vrf1.id
+  addr                     = var.cxt_cidr
 }
 
 #User & TGW Subnets
 
-resource "aci_cloud_subnet" "cloud_subnet1" {
+resource "aci_cloud_subnet" "cloud_subnet_tgw" {
+  for_each           = var.tgw_subnets
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
-  name               = "tgw-a-subnet"
-  ip                 = "172.11.1.0/24"
-  usage              = "gateway"
-  zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
+  name               = each.value.name
+  ip                 = each.value.ip
+  usage              = each.value.usage
+  zone               = "uni/clouddomp/provp-aws/${each.value.zone}"
 }
 
-resource "aci_cloud_subnet" "cloud_subnet2" {
+resource "aci_cloud_subnet" "cloud_subnet_user" {
+  for_each           = var.user_subnets
   cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
-  name               = "tgw-b-subnet"
-  ip                 = "172.11.2.0/24"
-  usage              = "gateway"
-  zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
-}
-
-resource "aci_cloud_subnet" "cloud_subnet3" {
-  cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
-  name               = "web-subnet"
-  ip                 = "172.11.3.0/24"
-  usage              = "user"
-  zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1a"
-  depends_on         = [aci_cloud_subnet.cloud_subnet1]
-}
-
-resource "aci_cloud_subnet" "cloud_subnet4" {
-  cloud_cidr_pool_dn = data.aci_cloud_cidr_pool.cloud_cidr_pool.id
-  name               = "db-subnet"
-  ip                 = "172.11.4.0/24"
-  usage              = "user"
-  zone               = "uni/clouddomp/provp-aws/region-us-east-1/zone-us-east-1b"
-  depends_on         = [aci_cloud_subnet.cloud_subnet1]
-
+  name               = each.value.name
+  ip                 = each.value.ip
+  usage              = each.value.usage
+  zone               = "uni/clouddomp/provp-aws/${each.value.zone}"
+  depends_on         = [aci_cloud_subnet.cloud_subnet_tgw]
 }
 
 #Define Application Profile
 
 resource "aci_cloud_applicationcontainer" "myapp" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "myapp"
+  name      = var.app_profile
 }
 
 #Define Web EPG
 
 resource "aci_cloud_epg" "cloud_apic_web" {
-  name                            = "Web"
+  name                            = var.epg_web
   cloud_applicationcontainer_dn   = aci_cloud_applicationcontainer.myapp.id
-  relation_fv_rs_cons             = [aci_contract.contract_epg1_epg2.id]
-  relation_fv_rs_prov             = [aci_contract.contract_web_internet.id]
+  relation_fv_rs_cons             = [aci_contract.web-to-db.id]
+  relation_fv_rs_prov             = [aci_contract.web_internet.id]
   relation_cloud_rs_cloud_epg_ctx = aci_vrf.vrf1.id
 }
 
 resource "aci_cloud_endpoint_selector" "cloud_ep_selector1" {
   cloud_epg_dn     = aci_cloud_epg.cloud_apic_web.id
-  name             = "ep1-select"
-  match_expression = "IP=='172.11.3.0/24'"
+  name             = var.selector_web
+  match_expression = "custom:epg=='web'"
 }
 
 #Define DB EPG
 
 resource "aci_cloud_epg" "cloud_apic_db" {
-  name                            = "DB"
+  name                            = var.epg_db
   cloud_applicationcontainer_dn   = aci_cloud_applicationcontainer.myapp.id
-  relation_fv_rs_prov             = [aci_contract.contract_epg1_epg2.id]
+  relation_fv_rs_prov             = [aci_contract.web-to-db.id]
   relation_cloud_rs_cloud_epg_ctx = aci_vrf.vrf1.id
 }
 
 resource "aci_cloud_endpoint_selector" "cloud_ep_selector2" {
   cloud_epg_dn     = aci_cloud_epg.cloud_apic_db.id
-  name             = "ep2-select"
-  match_expression = "custom:epg=='db'"
+  name             = var.selector_db
+  match_expression = "IP=='172.11.4.0/24'"
 }
 
 #Define Web to DB Contract + Filter + Subject
 
-resource "aci_contract" "contract_epg1_epg2" {
+resource "aci_contract" "web-to-db" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "web-to-db"
+  name      = var.contract_name
 }
 
 resource "aci_filter" "web-to-db" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "web-to-db"
+  name      = var.filter_name
 }
 
 resource "aci_filter_entry" "ssh" {
@@ -149,37 +130,37 @@ resource "aci_filter_entry" "icmp" {
 }
 
 resource "aci_contract_subject" "web-to-db" {
-  contract_dn                  = aci_contract.contract_epg1_epg2.id
-  name                         = "Subject1"
+  contract_dn                  = aci_contract.web-to-db.id
+  name                         = "subject1"
   relation_vz_rs_subj_filt_att = [aci_filter.web-to-db.id]
 }
 
 #Define Cloud External EPG for Internet Access (L3Out)
 
 resource "aci_cloud_external_epg" "cloud_apic_ext_epg" {
-  name                            = "Internet"
+  name                            = var.epg_internet
   cloud_applicationcontainer_dn   = aci_cloud_applicationcontainer.myapp.id
-  relation_fv_rs_cons             = [aci_contract.contract_web_internet.id]
+  relation_fv_rs_cons             = [aci_contract.web_internet.id]
   relation_cloud_rs_cloud_epg_ctx = aci_vrf.vrf1.id
   route_reachability              = "internet"
 }
 
 resource "aci_cloud_endpoint_selectorfor_external_epgs" "ext_ep_selector" {
   cloud_external_epg_dn = aci_cloud_external_epg.cloud_apic_ext_epg.id
-  name                  = "Internet"
-  subnet                = "0.0.0.0/0"
+  name                  = var.selector_internet
+  subnet                = var.subnet_internet
 }
 
 #Define Web to Internet Contract + Filter + Subject
 
-resource "aci_contract" "contract_web_internet" {
+resource "aci_contract" "web_internet" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "internet-access"
+  name      = var.contract_name_internet
 }
 
 resource "aci_filter" "internet" {
   tenant_dn = aci_tenant.terraform_ten.id
-  name      = "Internet"
+  name      = var.filter_name_internet
 }
 
 resource "aci_filter_entry" "all" {
@@ -188,8 +169,8 @@ resource "aci_filter_entry" "all" {
   ether_t   = "unspecified"
 }
 
-resource "aci_contract_subject" "web-internet" {
-  contract_dn                  = aci_contract.contract_web_internet.id
-  name                         = "Subject2"
+resource "aci_contract_subject" "web_internet" {
+  contract_dn                  = aci_contract.web_internet.id
+  name                         = "subject2"
   relation_vz_rs_subj_filt_att = [aci_filter.internet.id]
 }
