@@ -27,7 +27,7 @@ Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC creden
 1. Install and set up your [terraform](https://www.terraform.io/downloads.html) environment
 2. Clone/copy the .tf files (main.tf, variables.tf, outputs.tf, and versions.tf) onto your terraform environment
 3. Create a terraform.tfvars file with your Cloud APIC credentials and AWS account used for the user tenant/VPC
-4. Optionally, aws.tf file deploy two EC2 instances (web-vm, db-vm) for testing purposes.
+4. Optionally, the aws.tf file deploys two EC2 instances (web-vm and db-vm) for testing purposes.
 
 **Usage**
 ```
