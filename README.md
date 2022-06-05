@@ -6,11 +6,11 @@ This project shows how Cloud ACI works on public clouds such as AWS, how it norm
 
 **High Level Diagram**
 
-<img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/hld.png">
+<img width="600" alt="aws" src="https://github.com/marinalf/cloudaci-demo-terraform-aws/blob/main/images/demo.png">
 
 ## Use Case: Single Region/Tenant/VRF
 
-The code builds a VPC on us-east-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access from Internet using contracts. 
+The code builds a VPC on us-east-1 region (same region as the infra VPC where cAPIC is deployed) with TGW, then creates two EPGs (Web & DB) which translates to 2 Security Groups, and enable Web access from Internet using contracts.
 
 **Pre-requisites**
 
@@ -20,17 +20,16 @@ Cloud ACI running in AWS on a dedicated account/infra VPC. The Cloud APIC creden
 
 | Name      | Version |
 | --------- | ------- |
-| [aci](https://registry.terraform.io/providers/CiscoDevNet/aci/latest)|  >=0.71   |
+| [aci](https://registry.terraform.io/providers/CiscoDevNet/aci/latest)|  >=2.2.1   |
 
 **Installation**
 
 1. Install and set up your [terraform](https://www.terraform.io/downloads.html) environment
-2. Clone/copy the .tf files (main.tf, variables.tf, and versions.tf) onto your terraform runtime environment
+2. Clone/copy the .tf files (main.tf, variables.tf, outputs.tf, and versions.tf) onto your terraform environment
 3. Create a terraform.tfvars file with your Cloud APIC credentials and AWS account used for the user tenant/VPC
-4. Optionally, the outputs.tf and aws.tf files deploy an EC2 instance for testing purposes.
+4. Optionally, aws.tf file deploy two EC2 instances (web-vm, db-vm) for testing purposes.
 
 **Usage**
-
 ```
 terraform init
 terraform plan

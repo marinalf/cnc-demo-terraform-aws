@@ -1,11 +1,3 @@
-# AWS provider
-
-provider "aws" {
-  region     = "us-east-1"
-  access_key = var.access_key_id
-  secret_key = var.secret_access_key
-}
-
 # Existing resources in AWS
 
 data "aws_ami" "linux2_ami" {
@@ -30,25 +22,45 @@ data "aws_ami" "linux2_ami" {
 
 # Creating an EC2 instance
 
-resource "aws_instance" "demo-ec2" {
+resource "aws_instance" "demo-ec2-web" {
   ami                         = data.aws_ami.linux2_ami.id
   instance_type               = "t2.micro"
-  subnet_id                   = data.aws_subnet.capic_subnet.id
+  subnet_id                   = data.aws_subnet.capic_subnet_web.id
   associate_public_ip_address = true
 
   tags = {
-    "${var.tag_key}" = var.tag_value
+     Name = "web-vm"
+  }
+}
+
+resource "aws_instance" "demo-ec2-db" {
+  ami                         = data.aws_ami.linux2_ami.id
+  instance_type               = "t2.micro"
+  subnet_id                   = data.aws_subnet.capic_subnet_db.id
+  associate_public_ip_address = false
+
+  tags = {
+    Name = "db-vm"
   }
 }
 
 # Existing resources created by cAPIC
 
-data "aws_subnet" "capic_subnet" {
+data "aws_subnet" "capic_subnet_web" {
   filter {
     name   = "tag:Name"
-    values = ["subnet-[${data.terraform_remote_state.vpc.outputs.subnet}]"]
+    values = ["subnet-[${data.terraform_remote_state.vpc.outputs.web-subnet}]"]
   }
   availability_zone = "us-east-1a"
+  vpc_id            = data.aws_vpc.capic_vpc.id
+}
+
+data "aws_subnet" "capic_subnet_db" {
+  filter {
+    name   = "tag:Name"
+    values = ["subnet-[${data.terraform_remote_state.vpc.outputs.db-subnet}]"]
+  }
+  availability_zone = "us-east-1b"
   vpc_id            = data.aws_vpc.capic_vpc.id
 }
 

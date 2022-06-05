@@ -1,13 +1,3 @@
-# Provider Config
-
-provider "aci" {
-  username = var.username
-  password = var.password
-  url      = var.url
-  insecure = true
-
-}
-
 #Tenant + AWS Account + VRF
 
 resource "aci_tenant" "terraform_ten" {
@@ -83,7 +73,7 @@ resource "aci_cloud_epg" "cloud_apic_web" {
 resource "aci_cloud_endpoint_selector" "cloud_ep_selector1" {
   cloud_epg_dn     = aci_cloud_epg.cloud_apic_web.id
   name             = var.selector_web
-  match_expression = "custom:epg=='web'"
+  match_expression = "IP=='172.11.3.0/24'"
 }
 
 #Define DB EPG
@@ -98,7 +88,7 @@ resource "aci_cloud_epg" "cloud_apic_db" {
 resource "aci_cloud_endpoint_selector" "cloud_ep_selector2" {
   cloud_epg_dn     = aci_cloud_epg.cloud_apic_db.id
   name             = var.selector_db
-  match_expression = "IP=='172.11.4.0/24'"
+  match_expression = "custom:Name=='db-vm'"
 }
 
 #Define Web to DB Contract + Filter + Subject

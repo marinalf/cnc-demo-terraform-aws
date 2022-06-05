@@ -9,8 +9,8 @@ variable "account_id" {}
 # AWS Hub Network
 
 variable "hub_name" {
-  description = "Replace with hub network name defined during the frist time setup"
-  default = "hub1"
+  description = "Replace with hub network name defined during the first time setup"
+  default = "TGW"
 }
 
 # Tenant + VRF

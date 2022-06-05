@@ -6,5 +6,15 @@ terraform {
       source = "ciscodevnet/aci"
     }
   }
-  required_version = ">= 0.14"
+  required_version = ">= 1.1"
+}
+
+# Provider Config
+
+provider "aci" {
+  username = var.username
+  password = var.password
+  url      = var.url
+  insecure = true
+
 }
